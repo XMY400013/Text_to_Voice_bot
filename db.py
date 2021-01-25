@@ -24,14 +24,16 @@ def create_user(user):
         })
 
 
-def change_state(user, set_=False):
+def change_state(user, format_=None):
     find_ = col.find_one({
         'user': str(user)
     })
-    if set_:
+    if format_:
         col.update(
             {'_id': find_['_id']},
-            {'$set': {'state': True}}
+            {
+                '$set': {'state': format_}
+            }
         )
     else:
         col.update_one(

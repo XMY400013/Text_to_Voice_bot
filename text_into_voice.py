@@ -23,20 +23,25 @@ def start_(m):
 def mes_(m):
     if m.text in ['voice', 'audio']:
 
-        db.change_state(m.from_user.id, set_=True)
+        db.change_state(m.from_user.id, format_='audio' if m.text == 'audio' else 'OGG')
         tb.send_message(chat_id=m.chat.id, text='Okay!, send me some text!')
 
     else:
-        voice = speech_(m.text)
+        audio = speech_(m.text)
         key_ = ty.ReplyKeyboardMarkup(
             resize_keyboard=True, one_time_keyboard=True
         )
         key_.row('voice', 'audio')
-        format = db.give_state(m.from_user.id)
-        if format == 'OGG':
+        state_ = db.give_state(m.from_user.id)
+        if  state_ == 'OGG':
 
-            tb.send_voice(chat_id=m.chat.id, voice=voice, reply_markup=key_)
+            tb.send_voice(chat_id=m.chat.id, voice=audio, reply_markup=key_)
             db.change_state(m.from_user.id)
-        elif format == 'mp3':
-            pass
+            
+        elif state_ == 'audio':
+
+            tb.send_audio(chat_id=m.chat.id, audio=audio, reply_markup=key_)
+            db.change_state(m.from_user.id)
+
+
 tb.polling(none_stop=True)
